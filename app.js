@@ -293,7 +293,7 @@ function closeStory(){if(SV)cancelAnimationFrame(SV.t);SV=null;$('#story').class
 document.addEventListener('keydown',function(e){if(!SV)return;if(e.key==='ArrowRight')storyGo(SV.i+1);if(e.key==='ArrowLeft')storyGo(SV.i-1);if(e.key==='Escape')closeStory()});
 /* ---------- READ ---------- */
 function readList(v){var acc=chapterAcc();
-  var h='<div class="page"><h1>📖 อ่านเนื้อหา</h1><p class="muted">เรียงตามโครงสร้างข้อสอบ (หมวด 1 พื้นฐาน → หมวด 2 กฎ/จรรยาบรรณ → หมวด 3 ผลิตภัณฑ์) ข้างในแต่ละบทเรียงจากง่ายไปยาก: สรุปสั้น → สไลด์ติว → ใบสรุป → ข้อสอบ</p>'+
+  var h='<div class="page"><h1>📖 อ่านเนื้อหา</h1><p class="muted">เรียงตามโครงสร้างข้อสอบ (หมวด 1 พื้นฐาน → หมวด 2 กฎ/จรรยาบรรณ → หมวด 3 ผลิตภัณฑ์) ข้างในแต่ละบทเรียงจากง่ายไปยาก: สรุปสั้น → สไลด์ติว → หนังสือสรุป → ข้อสอบ</p>'+
   '<div class="card tap" id="toF"><div class="row"><div class="thumb ico-sum">∑</div><div><b>ชีตสรุปสูตร IC P1</b><div class="muted">สูตรทั้งหมดพร้อมความหมายตัวแปรและตัวอย่าง (จุดอ่อนของเรา → อ่านบ่อยๆ)</div></div></div></div>'+
   '<div class="card tap" id="toL"><div class="row"><div class="thumb ico-sum">✎</div><div><b>เข้าใจโจทย์ทีละสูตร</b><div class="muted">แนวคิด → ตัวแปร → ตัวอย่าง → ทำด้วยกัน → ทำเอง → ทบทวน'+(window.LEARN?' · ผ่านแล้ว '+window.LEARN.passedCount()+'/'+window.LEARN.total:'')+'</div></div></div></div>'+
   '<div class="card tap" id="toInfo"><div class="row">'+thumbHTML(5,'ข้อสอบ')+'<div><b>โครงสร้างข้อสอบ</b><div class="muted">'+D.examInfo.short+'</div></div></div></div>';
@@ -303,13 +303,12 @@ function readList(v){var acc=chapterAcc();
   v.innerHTML=h+'</div>';
   $('#toF').onclick=function(){go('formula','sheet')};$('#toL').onclick=function(){go('formula','learn')};$('#toInfo').onclick=function(){modal(D.examInfo.full+'<div style="margin-top:10px"><button class="btn pri" id="mclose">ปิด</button></div>')};
   $$('.card[data-ch]',v).forEach(function(e){e.onclick=function(){go('chapter',e.dataset.ch)}});}
-function chapter(v,id){var c=CHBY[id];var tabs=[['kp','สรุปสั้น']];if(c.slides.length)tabs.push(['sl','สไลด์ติว ('+c.slides.length+')']);tabs.push(['sh','ใบสรุป อ.ยีน']);if(c.book.length)tabs.push(['bk','หนังสือสรุป ('+c.book.length+' หน้า)']);tabs.push(['qz','ข้อสอบบทนี้ ('+c.qcount+')']);
+function chapter(v,id){var c=CHBY[id];var tabs=[['kp','สรุปสั้น']];if(c.slides.length)tabs.push(['sl','สไลด์ติว ('+c.slides.length+')']);if(c.book.length)tabs.push(['bk','หนังสือสรุป ('+c.book.length+' หน้า)']);tabs.push(['qz','ข้อสอบบทนี้ ('+c.qcount+')']);
   v.innerHTML='<div class="page"><button class="btn sm" id="back">← กลับ</button><h1>บท '+c.id+' '+esc(c.title)+'</h1><div class="muted">หมวด '+c.part+' · ออกสอบประมาณ '+c.n+' ข้อ</div><div class="seg">'+tabs.map(function(t,i){return '<button data-t="'+t[0]+'"'+(i?'':' class="on"')+'>'+t[1]+'</button>'}).join('')+'</div><div id="chbody"></div></div>';
   $('#back').onclick=function(){go('read')};
   function show(t){$$('.seg button',v).forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});var b=$('#chbody');
     if(t==='kp')b.innerHTML='<div class="card"><ul class="kp">'+c.kp.map(function(k){return '<li>'+k+'</li>'}).join('')+'</ul><div class="muted" style="margin-top:8px">ที่มา: '+esc(c.kpsrc)+'</div></div>'+(c.formulas.length?'<h2>สูตรที่เกี่ยวข้อง</h2>'+c.formulas.map(function(fid){var f=D.formulas.filter(function(x){return x.id===fid})[0];return f?'<div class="card">'+'<b>'+f.title+'</b>'+f.html+(f.vars?'<div class="muted">'+f.vars+'</div>':'')+'</div>':''}).join(''):'')+'<button class="btn pri" id="qz2">ทำข้อสอบบทนี้</button>';
     else if(t==='sl')b.innerHTML='<p class="muted">สไลด์จาก “เอกสารติวสอบ IC” · หน้าที่เขียนว่า “ตัวอย่างข้อสอบ” ในเอกสารไม่มีเฉลย ลองคิดเองก่อนนะ</p><div class="imgs">'+c.slides.map(function(s){return '<img loading="lazy" src="assets/slides/'+s+'" alt="">'}).join('')+'</div>';
-    else if(t==='sh')b.innerHTML='<p class="muted">ใบสรุปลายมือ อ.ยีน (บทละ 1 หน้า) · แตะรูปเพื่อเปิดเต็มจอแล้วซูมได้</p><div class="imgs"><a href="assets/sheets/'+c.sheet+'" target="_blank"><img loading="lazy" src="assets/sheets/'+c.sheet+'" alt=""></a></div>';
     else if(t==='bk')b.innerHTML='<p class="muted">หน้าหนังสือ “หนังสือสรุปเนื้อหาพร้อมสอบ IC PLAIN (P1)” ที่ตรงกับบทนี้ (อาจมีบทข้างเคียงติดมาในหน้าเดียวกัน) · แตะเพื่อซูม</p><div class="imgs">'+c.book.map(function(s){return '<a href="assets/book/'+s+'" target="_blank"><img loading="lazy" src="assets/book/'+s+'" alt="">'}).join('')+'</div>';
     else {startQuiz({mode:'ch',ch:c.id});return}
     var q2=$('#qz2');if(q2)q2.onclick=function(){startQuiz({mode:'ch',ch:c.id})};}
