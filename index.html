@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="th" data-theme="dark" style="background:#000">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="IC Buddy">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<script>
+(function(){var t="dark";try{var v=localStorage.getItem("icbuddy-theme");if(v==="light"||v==="dark")t=v}catch(e){}
+document.documentElement.setAttribute("data-theme",t);
+document.documentElement.style.background=t==="light"?"#fff":"#000";
+var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",t==="light"?"#ffffff":"#000000");
+var s=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(s)s.setAttribute("content",t==="light"?"default":"black");
+})();
+</script>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=1">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1">
+<link rel="icon" href="favicon.ico?v=1" sizes="any">
+<link rel="manifest" href="manifest.webmanifest?v=1">
+<title>IC Buddy · ติวสอบ IC Plain (P1)</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="app.css?v=2">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="logo" id="logo">IC Buddy<span class="logo-dot">✦</span></div>
+    <div class="top-actions">
+      <button class="icon-btn" id="btnTheme" title="โทนดำ · แตะเพื่อใช้โทนขาว" aria-label="สลับเป็นโทนขาว">☀</button>
+      <button class="icon-btn" id="btnLiked" title="โพสต์ที่กดหัวใจ" aria-label="liked">♡<span class="badge" id="likedCount"></span></button>
+      <button class="icon-btn" id="btnFormula" title="ชีตสูตร" aria-label="formula">∑</button>
+    </div>
+  </header>
+  <main id="view"></main>
+  <nav id="bottomnav">
+    <button data-tab="home" class="on"><span class="ni">⌂</span><span class="nl">ฟีด</span></button>
+    <button data-tab="read"><span class="ni">📖</span><span class="nl">อ่าน</span></button>
+    <button data-tab="quiz" class="nav-plus"><span class="ni">＋</span><span class="nl">ข้อสอบ</span></button>
+    <button data-tab="review"><span class="ni">↻</span><span class="nl">ทบทวน</span></button>
+    <button data-tab="profile"><span class="ni nav-av"><img id="navAvatar" alt=""><span id="navAvatarPriv" class="av-priv">M</span></span><span class="nl">โปรไฟล์</span></button>
+  </nav>
+</div>
+<div id="story" class="hidden" aria-modal="true"></div>
+<div id="modal" class="hidden"></div>
+<button type="button" id="calcFab" class="calc-fab" title="เครื่องคิดเลข" aria-label="เปิดเครื่องคิดเลข" aria-expanded="false">
+  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+    <rect x="4.2" y="2.6" width="15.6" height="18.8" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <rect x="7" y="5.2" width="10" height="3.6" rx="0.8" fill="currentColor" opacity=".35"/>
+    <circle cx="8.2" cy="12.2" r="0.95" fill="currentColor"/>
+    <circle cx="12" cy="12.2" r="0.95" fill="currentColor"/>
+    <circle cx="15.8" cy="12.2" r="0.95" fill="currentColor"/>
+    <circle cx="8.2" cy="15.6" r="0.95" fill="currentColor"/>
+    <circle cx="12" cy="15.6" r="0.95" fill="currentColor"/>
+    <circle cx="15.8" cy="15.6" r="0.95" fill="currentColor"/>
+    <circle cx="8.2" cy="19" r="0.95" fill="currentColor"/>
+    <rect x="11.05" y="18.15" width="5.7" height="1.7" rx="0.85" fill="currentColor"/>
+  </svg>
+</button>
+<div id="calc" class="hidden" aria-hidden="true">
+  <div class="calc-sheet" role="dialog" aria-label="เครื่องคิดเลข">
+    <div class="calc-head">
+      <b>เครื่องคิดเลข</b>
+      <button type="button" class="icon-btn" id="calcClose" title="ปิด" aria-label="ปิดเครื่องคิดเลข">×</button>
+    </div>
+    <div class="calc-hist" id="calcHist" hidden></div>
+    <div class="calc-disp">
+      <div class="calc-expr" id="calcExpr"></div>
+      <div class="calc-out" id="calcOut">0</div>
+    </div>
+    <div class="calc-keys" id="calcKeys">
+      <button type="button" data-k="C" class="k-fn">C</button>
+      <button type="button" data-k="bs" class="k-fn" aria-label="ลบ">←</button>
+      <button type="button" data-k="(" class="k-fn">(</button>
+      <button type="button" data-k=")" class="k-fn">)</button>
+      <button type="button" data-k="√" class="k-fn">√</button>
+      <button type="button" data-k="^" class="k-fn">x<sup>y</sup></button>
+      <button type="button" data-k="%" class="k-fn">%</button>
+      <button type="button" data-k="÷" class="k-op">÷</button>
+      <button type="button" data-k="7">7</button>
+      <button type="button" data-k="8">8</button>
+      <button type="button" data-k="9">9</button>
+      <button type="button" data-k="×" class="k-op">×</button>
+      <button type="button" data-k="4">4</button>
+      <button type="button" data-k="5">5</button>
+      <button type="button" data-k="6">6</button>
+      <button type="button" data-k="−" class="k-op">−</button>
+      <button type="button" data-k="1">1</button>
+      <button type="button" data-k="2">2</button>
+      <button type="button" data-k="3">3</button>
+      <button type="button" data-k="+" class="k-op">+</button>
+      <button type="button" data-k="±" class="k-fn">±</button>
+      <button type="button" data-k="0">0</button>
+      <button type="button" data-k=".">.</button>
+      <button type="button" data-k="=" class="k-eq">=</button>
+      <button type="button" data-k="Ans" class="k-ans">Ans</button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script src="config.js"></script>
+<script src="data.js?v=1"></script>
+<script src="assets/katex/katex.min.js?v=0.16.47"></script>
+<script src="learn-data.js?v=1"></script>
+<script src="learn.js?v=1"></script>
+<script src="media-data.js?v=1"></script>
+<script src="media.js?v=1"></script>
+<script src="pass.js?v=1"></script>
+<script src="games.js?v=1"></script>
+<script src="app.js?v=2"></script>
+</body>
+</html>
